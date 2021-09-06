@@ -29,6 +29,7 @@
     "electron-builder": "^22.11.7"
   },
   "build": {
+    "compression": "maximum",
     "appId": "com.amrupdater.app",
     "mac": {
       "category": "public.app-category.developer-tools"
