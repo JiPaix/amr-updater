@@ -10,3 +10,6 @@ pids
 node_modules/
 .npm
 .env
+tmp/
+dist
+out/

@@ -1,0 +1,86 @@
+// Modules to control application life and create native browser window
+const {app, BrowserWindow, ipcMain} = require('electron')
+const path = require('path')
+const fs = require('fs')
+
+function createWindow () {
+  // Create the browser window.
+  const mainWindow = new BrowserWindow({
+    width: 300,
+    height: 300,
+    autoHideMenuBar: true,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      nativeWindowOpen:false,
+    }
+  })
+
+  // and load the index.html of the app.
+  mainWindow.loadFile('index.html')
+
+  // Open the DevTools.
+}
+
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+// Some APIs can only be used after this event occurs.
+app.whenReady().then(() => {
+  createWindow()
+
+  app.on('activate', function () {
+    // On macOS it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (BrowserWindow.getAllWindows().length === 0) createWindow()
+  })
+})
+
+// Quit when all windows are closed, except on macOS. There, it's common
+// for applications and their menu bar to stay active until the user quits
+// explicitly with Cmd + Q.
+app.on('window-all-closed', function () {
+  if (process.platform !== 'darwin') app.quit()
+})
+
+// In this file you can include the rest of your app's specific main process
+// code. You can also put them in separate files and require them here.
+
+const {downloadAMR, extractAMR, error, cleanArtifacts, clean, msg} = require('./helpers.js')
+const target = path.normalize(path.join(__dirname, '/', 'dist'))
+const { dialog } = require('electron')
+let folder = ''
+
+ipcMain.on('choose-folder', (event) => {
+  dialog.showOpenDialog({ properties: ['openDirectory'] }).then(f => {
+    if(f.canceled) return
+    folder = path.normalize(f.filePaths[0])
+    const manifest = path.normalize(path.join(folder, 'AMR', 'manifest.json'))
+    if(fs.existsSync(manifest)) {
+      event.sender.send('init', 'Update AMR')
+    } else {
+      event.sender.send('init', 'Install AMR')
+    }
+  })
+})
+
+
+ipcMain.on('start', async(event) => {
+  try {
+    await clean(folder).catch((e) => event.sender.send('message', msg("Couldn't clean previous install: "+e, true)))
+    event.sender.send('message', msg('1/4 downloading AMR..'))
+    await downloadAMR(folder).catch((e) => event.sender.send('message', msg("couldn't download AMR: "+e, true)))
+    event.sender.send('message', msg('2/4 Extrating files...'))
+    await extractAMR(folder).catch((e) => event.sender.send('message', msg("couldn't extract AMR: "+e, true)))
+    event.sender.send('message', msg('3/4 cleaning artifacts'))
+    await clean(folder, false).catch((e)=> event.sender.send('message', msg("couldn't delete artifacts: "+e, true)))
+    event.sender.send('message', msg('4/4 AMR Extension is available at: \n\n'+path.normalize(path.join(folder, 'AMR'))))
+    event.sender.send('close')
+  } catch(e) {
+    event.sender.send('message', msg(e, true))
+    event.sender.send('close')
+  }
+})
+
+ipcMain.on('close',() => {
+  app.quit()
+})

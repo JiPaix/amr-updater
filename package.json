@@ -1,39 +1,37 @@
 {
-  "name": "AMRupdater",
+  "name": "amr-updater",
   "version": "0.0.1",
-  "description": "Automatically update AMR",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "/dist"
-  ],
-  "pkg": {
-    "scripts": "./dist/*"
-  },
+  "description": "",
+  "main": "main.js",
   "scripts": {
-    "build": "node ./node_modules/typescript/bin/tsc ",
-    "prepublishOnly": "npm run build",
-    "postpublish": "pkg ./dist/bin/index.js --out-path executables --compress Brotli"
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "postinstall": "electron-builder install-app-deps"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/JiPaix/amr-updater.git"
+    "url": "git+ssh://git@gitlab.com/JiPaix/amr-updater.git"
   },
-  "keywords": [
-   "AMR",
-   "updater",
-   "all mangas reader"
-  ],
-  "author": "JiPaix",
+  "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://gitlab.com/JiPaix/amr-updater/-/issues"
+    "url": "https://gitlab.com/JiPaix/amr-updater/issues"
   },
-  "homepage": "https://gitlab.com/JiPaix/amr-updater",
-  "devDependencies": {
-    "@types/node": "^16.7.10"
-  },
+  "homepage": "https://gitlab.com/JiPaix/amr-updater#readme",
   "dependencies": {
-    "dialog": "^0.3.1"
+    "adm-zip": "^0.5.5",
+    "axios": "^0.21.4",
+    "mv": "^2.1.1"
+  },
+  "devDependencies": {
+    "electron": "^14.0.0",
+    "electron-builder": "^22.11.7"
+  },
+  "build": {
+    "appId": "com.amrupdater.app",
+    "mac": {
+      "category": "public.app-category.developer-tools"
+    }
   }
 }
