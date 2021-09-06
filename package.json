@@ -1,0 +1,39 @@
+{
+  "name": "AMRupdater",
+  "version": "0.0.1",
+  "description": "Automatically update AMR",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "/dist"
+  ],
+  "pkg": {
+    "scripts": "./dist/*"
+  },
+  "scripts": {
+    "build": "node ./node_modules/typescript/bin/tsc ",
+    "prepublishOnly": "npm run build",
+    "postpublish": "pkg ./dist/bin/index.js --out-path executables --compress Brotli"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/JiPaix/amr-updater.git"
+  },
+  "keywords": [
+   "AMR",
+   "updater",
+   "all mangas reader"
+  ],
+  "author": "JiPaix",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://gitlab.com/JiPaix/amr-updater/-/issues"
+  },
+  "homepage": "https://gitlab.com/JiPaix/amr-updater",
+  "devDependencies": {
+    "@types/node": "^16.7.10"
+  },
+  "dependencies": {
+    "dialog": "^0.3.1"
+  }
+}
