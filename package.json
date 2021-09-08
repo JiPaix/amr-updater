@@ -1,13 +1,13 @@
 {
   "name": "amr-updater",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "postinstall": "electron-builder install-app-deps",
-    "build": "electron-builder --mac --windows --linux",
-    "release": "electron-builder --mac --windows --linux --publish always"
+    "build": "electron-builder",
+    "release": "electron-builder --publish always"
   },
   "repository": {
     "type": "git",
