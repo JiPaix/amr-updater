@@ -9,7 +9,7 @@ exports.checkManifest = async (manifestPath) => {
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'))
   return new Promise(async(resolve, reject) => {
     if(manifest.name.toLocaleLowerCase() !== 'all mangas reader') {
-      reject('This is not AMR!')
+      reject('This folder contains an extension which is not AMR!')
     } else {
       resolve()
     }
@@ -17,18 +17,20 @@ exports.checkManifest = async (manifestPath) => {
 }
 
 exports.checkVersion = async (dir) => {
-  const last_commitPath = path.join(dir, 'last_commit.txt')
-  if(fs.existsSync(last_commitPath)) {
-    const remote_commit = await axios('https://raw.githubusercontent.com/JiPaix/AMR-BUILT/main/dist/last_commit.txt')
-    const local_commit = fs.readFileSync(last_commitPath, 'utf-8')
-    if(remote_commit === local_commit) {
-      reject('already up-to-date')
+  return new Promise(async(resolve, reject) => {
+    const last_commitPath = path.join(dir, 'last_commit.txt')
+    if(fs.existsSync(last_commitPath)) {
+      const remote_commit = (await axios('https://raw.githubusercontent.com/JiPaix/AMR-BUILT/main/dist/last_commit.txt')).data
+      const local_commit = fs.readFileSync(last_commitPath, 'utf-8')
+      if(remote_commit === local_commit) {
+        reject('Already up-to-date')
+      } else {
+        resolve()
+      }
     } else {
-      resolve()
+      resolve() 
     }
-  } else {
-    resolve() 
-  }
+  })
 }
 
 exports.clean = (folder, preinstall = true) => {

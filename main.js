@@ -7,8 +7,9 @@ function createWindow () {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 300,
-    height: 300,
+    height: 100,
     autoHideMenuBar: true,
+    resizable: false,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -45,7 +46,7 @@ app.on('window-all-closed', function () {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
-const {downloadAMR, extractAMR, moveAMR, clean, msg, checkManifest} = require('./helpers.js')
+const {downloadAMR, extractAMR, moveAMR, clean, msg, checkManifest, checkVersion} = require('./helpers.js')
 const target = path.normalize(path.join(__dirname, '/', 'dist'))
 const { dialog } = require('electron')
 let folder = ''
@@ -58,6 +59,7 @@ ipcMain.on('choose-folder', (event) => {
     if(fs.existsSync(manifest)) {
       try {
         await checkManifest(manifest)
+        await checkVersion(folder)
         event.sender.send('init', 'Update AMR')
       } catch(e) {
         event.sender.send('message', msg(e, true))
@@ -74,18 +76,18 @@ ipcMain.on('start', async(event) => {
   try {
     await clean(folder).catch((e) => event.sender.send('message', msg("Couldn't clean previous install: "+e, true)))
     event.sender.send('message', msg('1/5 downloading AMR..'))
-    await downloadAMR(folder).catch((e) => event.sender.send('message', msg("couldn't download AMR: "+e, true)))
+    await downloadAMR(folder).catch((e) => event.sender.send('message', msg("Couldn't download AMR: "+e, true)))
     event.sender.send('message', msg('2/5 Extracting files...'))
-    await extractAMR(folder).catch((e) => event.sender.send('message', msg("couldn't extract AMR: "+e, true)))
+    await extractAMR(folder).catch((e) => event.sender.send('message', msg("Couldn't extract AMR: "+e, true)))
     event.sender.send('message', msg('3/5 Moving files to parent path'))
     await moveAMR(folder).catch((e) => event.sender.send('message', msg("MV: "+e.message, true)))
-    event.sender.send('message', msg('4/5 cleaning artifacts'))
-    await clean(folder, false).catch((e)=> event.sender.send('message', msg("couldn't delete artifacts: "+e, true)))
-    event.sender.send('message', msg('5/5 AMR Extension is available at: \n\n'+path.normalize(path.join(folder, 'AMR'))))
+    event.sender.send('message', msg('4/5 Cleaning artifacts'))
+    await clean(folder, false).catch((e)=> event.sender.send('message', msg("Couldn't delete artifacts: "+e, true)))
+    event.sender.send('message', msg('5/5 Done.'))
     event.sender.send('close')
   } catch(e) {
     event.sender.send('message', msg(e, true))
-    event.sender.send('close')
+    event.sender.send('close', true)
   }
 })
 
