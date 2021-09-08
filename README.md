@@ -1,6 +1,12 @@
-# AMR UPDATER
-### only works with beta version of AMR
-1. Install AMR UPDATER
-2. Select a folder
-3. click "Install AMR"
-4. AMR new version is available at `your/folder/AMR`
+# AMR INSTALLER/UPDATER
+
+
+## HOW-TO
+1. Start AMR UPDATER and click select folder  
+![](https://i.imgur.com/bTSFDPe.png)
+- **update:** Select a folder with an existing AMR installation
+- **install:** Select or create an empty folder.
+2. Click Install AMR or Update AMR  
+![](https://i.imgur.com/HucaeTt.png) ![](https://i.imgur.com/kWVKocX.png)
+4. Wait until it's done and close AMR UPDATER  
+![](https://i.imgur.com/Fq9KBtw.png)
