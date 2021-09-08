@@ -1,11 +1,15 @@
 const ipc = require('electron').ipcRenderer
 window.addEventListener('DOMContentLoaded', () => {
   const folder = document.getElementById('folder')
-  const btn = document.getElementById('start')
-  const msg = document.getElementById('res')
-  const close = document.getElementById('close')
-  close.style = 'display:none;'
-  btn.style = 'display:none;'
+  const start = document.getElementById('start')
+  const res = document.getElementById('res')
+  const logo = document.getElementById('logo')
+  const msg = document.getElementById('msg')
+  const fixedlogo = document.getElementById('fixedlogo')
+  fixedlogo.style.display = 'none'
+  start.style.display = 'none'
+  res.style.display = 'none'
+  logo.style.display = "none"
 
   folder.addEventListener('click', () => {
     ipc.send('choose-folder')
@@ -13,27 +17,36 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // ipc.send('init')
   ipc.on('init', function (event, btnText) {
-    btn.innerText = btnText
-    folder.style = 'display:none;'
-    btn.style = 'display:block';
+    console.log('init')
+    start.innerText = btnText
+    folder.style.display = 'none'
+    start.style.display = 'flex';
+    res.style.display = 'flex';
   })
 
-  btn.addEventListener('click', () => {
+  start.addEventListener('click', () => {
     ipc.send('start')
-    btn.style.display = 'none'
+    start.style.display = 'none'
   })
+
   ipc.on('message', (event, res) => {
-    const p = document.createElement('p')
-    if(res.error) p.style ="color:red;"
-    p.innerText = res.text
-    msg.appendChild(p)
+    if(res.error) {
+      msg.style.color = "red"
+      logo.style.display = "none"
+      fixedlogo.style.display = 'flex'
+    } else {
+      logo.style.display = "flex"
+    }
+    msg.innerText = res.text
   })
-  ipc.on('close', (event, message) => {
-    
-    close.addEventListener('click', () => {
-      ipc.send('close')
-    })
-    close.style = 'display:block;'
+
+  ipc.on('close', (event, iserror) => {
+    res.style.display = 'flex'
+    folder.style.display = 'none'
+    logo.style.display = 'none'
+    if(!iserror) {
+      fixedlogo.style.display = 'flex'
+    }
   })
 })
 

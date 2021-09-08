@@ -3,15 +3,26 @@
   <head>
     <meta charset="UTF-8">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta 
+    http-equiv="Content-Security-Policy" 
+    content="default-src 'self'; 
+      script-src 'self'; 
+      font-src 'self' https://fonts.gstatic.com;
+      style-src 'self' https://fonts.googleapis.com">
     <title>AMR UPDATER</title>
+    <script src="./renderer.js"></script>
+    <link href="index.css" rel="stylesheet">
   </head>
   <body>
-    <button id="folder">Select a folder</button>
-    <button id="start">Loading</button>
-    <div id="res"></div>
-    <button id="close">EXIT</button>
-    <!-- You can also require other files to run in this process -->
-    <script src="./renderer.js"></script>
+    <div class="flex justify-content-center">
+      <button id="folder">Select a folder</button>
+      <button id="start">Loading</button>
+    </div>
+    <div id="res">
+      <img id="logo" class="icon" src="icon_32.png" />
+      <img id="fixedlogo" class="icon" src="icon_32.png" />
+      <span id="msg">
+      </span>
+    </div>
   </body>
 </html>
