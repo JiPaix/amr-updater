@@ -2,20 +2,29 @@ const axios = require('axios')
 const fs = require('fs')
 const path = require('path')
 const tmp = path.normalize(path.join(__dirname, '/', 'tmp'))
-const mv = require('mv')
+const {copy} = require('fs-extra')
 const AdmZip = require('adm-zip')
 
+exports.checkManifest = async (manifestPath) => {
+  
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'))
+  return new Promise(async(resolve, reject) => {
+    if(manifest.name.toLocaleLowerCase() !== 'all mangas reader') {
+      reject('This is not AMR!')
+    } else {
+      const res = await axios('https://raw.githubusercontent.com/JiPaix/AMR-BUILT/main/dist/manifest.json')
+      if(res.data.version === manifest.version) {
+        reject('Already up-to-date')
+      }
+      resolve()
+    }
+  })
+}
 
 exports.clean = (folder, preinstall = true) => {
   return new Promise((resolve, reject) => {
-    const amrFolder = path.join(folder, 'AMR')
     const tmpFolder = path.join(folder, 'tmp')
     try {
-      if(preinstall) {
-        if(fs.existsSync(amrFolder)) {
-          fs.rmSync(amrFolder, {recursive: true, force:true})
-        }
-      }
       if(fs.existsSync(path.join(folder, 'tmp'))) {
         fs.rmSync(tmpFolder, {recursive: true, force:true})
       }
@@ -57,16 +66,15 @@ exports.extractAMR = async(folder) => {
     const zip = new AdmZip(path.join(unzipFolder, 'amr.zip'))
     zip.extractAllToAsync(unzipFolder, true, (e) => {
       if(e) {
-        return reject('ZIP: '+e.message)
+        reject('ZIP: '+e.message)
       } else {
-        mv(path.join(unzipFolder, 'AMR-BUILT-main', 'dist'), path.normalize(path.join(folder, 'AMR')), {mkdirp: true}, (e) => {
-          if(e) {
-            reject('MV: '+e)
-          } else {
-            resolve()
-          }
-        })
+        resolve()
       }
     })
   })
+}
+
+exports.moveAMR = async(folder) => {
+  const distFolder = path.join(folder, 'tmp', 'AMR-BUILT-main', 'dist')
+  return copy(distFolder, folder, {overwrite: true})
 }
