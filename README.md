@@ -10,5 +10,8 @@
 4. Wait until it's done and close AMR UPDATER  
 ![](https://i.imgur.com/Fq9KBtw.png)
 
-## Support =)
+## Support =) 👍 
+I do not own AMR, for this reason the updates goes through my own server which is paid with my own money.  
+You can help me cover the cost by donating here:  
+
 [![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate?hosted_button_id=K2G556GRFBVXC)
